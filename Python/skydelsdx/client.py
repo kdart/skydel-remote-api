@@ -1,41 +1,67 @@
-#!/usr/bin/env python3
+"""Base Skydel client."""
 
 import socket
-import sys
 import struct
+import sys
 import time
 
+
+class CLientError(OSError):
+  pass
+
+
 class Client:
-  def __init__(self, address, port, use_connection):
-    # Create a TCP/IP socket
-    self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM if use_connection else socket.SOCK_DGRAM)
-    self.server_address = (address, port)
-    self.port = port
-    self.address = address
-    
-    if use_connection:
-      # Connect the socket to the port where the server is listening
-      self.sock.connect(self.server_address)
+
+  def __init__(self):
+    self._address = None
+    self._sock = None
 
   def __del__(self):
-    time.sleep(0.5)
-    self.sock.close()
-    
-  def getPort(self):
-    return self.port
-    
-  def getAddress(self):
-    return self.address
+    self.close()
 
-  def setTimeout(self, time):
-    self.sock.settimeout(time)
-  
+  def close(self):
+    if self._sock is not None:
+      self._sock.close()
+      self._sock = None
+
+  def connect(self, hostname, port=4820):
+    if self._sock is not None:
+      return
+    for addrfamily, addrtype, _, _, addr in socket.getaddrinfo(
+        hostname, port, family=socket.AF_UNSPEC, type=socket.SOCK_STREAM
+    ):
+      sock = socket.socket(addrfamily, addrtype)
+      sock.connect(addr)
+      self._sock = sock
+      self._address = addr
+      break
+
+  @property
+  def address(self):
+    return self._address
+
+  @property
+  def port(self):
+    return self._address[1] if self._address is not None else None
+
+  @property
+  def server_address(self):
+    return self._address[0] if self._address is not None else None
+
+  @property
+  def sock(self):
+    return self._sock
+
+  def settimeout(self, time):
+    if self._sock is not None:
+      self._sock.settimeout(time)
+
   def _getPacket(self, size):
     packet = self.sock.recv(size)
     while len(packet) != size:
       chunk = self.sock.recv(size - len(packet))
       if len(chunk) == 0:
-        raise Exception("Server closed connection.")
+        raise ClientError('Server closed connection.')
       packet = packet + chunk
     return packet
 
@@ -46,10 +72,26 @@ class Client:
     return struct.pack('<B', dynamicType)
 
   def _ecef2Packet(self, triplet):
-   return struct.pack('<d', triplet.x) + struct.pack('<d', triplet.y) + struct.pack('<d', triplet.z)
+    return struct.pack('<ddd', triplet.x, triplet.y, triplet.z)
 
   def _angle2Packet(self, triplet):
-   return struct.pack('<d', triplet.yaw) + struct.pack('<d', triplet.pitch) + struct.pack('<d', triplet.roll)
+    return struct.pack('<ddd', triplet.yaw, triplet.pitch, triplet.roll)
 
   def _getPacketMsgId(self):
     return struct.unpack('<B', self._getPacket(1))[0]
+
+
+class DgramClient(Client):
+
+  def open(self, address):
+    if self._sock is not None:
+      return
+    host_addr, port, *rest = address
+    for addrfamily, addrtype, _, _, addr in socket.getaddrinfo(
+        host_addr, port, family=socket.AF_UNSPEC, type=socket.SOCK_DGRAM
+    ):
+      sock = socket.socket(addrfamily, addrtype)
+      self._sock = sock
+      self._address = addr
+      self._port = port
+      break

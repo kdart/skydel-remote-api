@@ -1,20 +1,26 @@
 #!/usr/bin/env python3
 
+# TODO(dart) fix this whole module.
+
+import json
 from .commandbase import CommandBase, obj_hook
 from .commandresult import CommandResult
-import json
+
 
 class Empty:
   pass
 
+
 def classFromName(className):
   return getattr(getattr(__import__("skydelsdx"), "commands"), className)
+
 
 def targetClassFromName(className, targetId):
   attribute = getattr(__import__("skydelsdx"), "plugins")
   for module in targetId.split("."):
     attribute = getattr(attribute, module)
   return getattr(getattr(attribute, "commands"), className)
+
 
 def createCommand(jsonStr):
   try:
@@ -28,13 +34,13 @@ def createCommand(jsonStr):
   else:
     MyClass = classFromName(class_name)
   command = Empty()
-  command.__class__ = MyClass
+  command.__class__ = MyClass  # TODO(dart) Nooooo! Fix this!
   command.values = values
   return command
 
+
 def createCommandResult(jsonStr):
-    type(jsonStr)
-    commandResult = createCommand(jsonStr.decode("UTF-8"))
-    relatedCmdJson = commandResult.values[CommandResult.RelatedCommandKey]
-    commandResult.setRelatedCommand(createCommand(relatedCmdJson))
-    return commandResult
+  commandResult = createCommand(jsonStr.decode("UTF-8"))
+  relatedCmdJson = commandResult.values[CommandResult.RelatedCommandKey]
+  commandResult.setRelatedCommand(createCommand(relatedCmdJson))
+  return commandResult
