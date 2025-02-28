@@ -1,0 +1,26 @@
+*~
+__pycache__
+
+# C extensions
+*.so
+src/*.c
+
+# Packages
+*.egg
+*.egg-info
+dist
+sdist
+build
+_build
+.eggs
+.cache
+.pytest_cache
+
+# Translations
+*.mo
+
+# OS cruft
+.directory
+.DS_Store
+
+tags
