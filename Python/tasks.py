@@ -142,7 +142,7 @@ def tag(ctx, newtag=None, major=False, minor=False, patch=False):
 
 
 @task
-def tag_delete(ctx, tagname):
+def tag_delete(ctx, tagname=None):
     """Delete a tag, both local and remote."""
     if tagname:
         ctx.run(f"git tag -d {tagname}")

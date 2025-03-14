@@ -1,13 +1,13 @@
 [build-system]
-requires = ["setuptools>=64.0", "wheel", "build"]
+requires = ["setuptools>=64.0", "setuptools_scm>=8", "wheel", "build"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name="Skydel SDX"
+name = "Skydel_SDX"
 dynamic = ["version", "dependencies", "scripts"]
-description="Skydel package for remote commands."
+description = "Skydel package for remote commands."
 readme = "readme.md"
-license = "Commercial License"
+license = {"file" = "../LICENCE"}
 requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3 :: Only",
@@ -15,3 +15,4 @@ classifiers = [
 ]
 
 [tool.setuptools_scm]
+root = ".."

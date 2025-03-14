@@ -59,9 +59,10 @@ source ~/skydelsdxvenv/bin/activate
 
 ### Install meta development dependencies
 
+pip install -U setuptools
+pip install setuptools_scm
 pip install invoke
 pip install semver
-pip install setuptools_scm
 
 ### List possible tasks
 

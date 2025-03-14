@@ -67,5 +67,5 @@ setup(
     test_suite="tests",
     tests_require=["pytest"],
     setup_requires=['setuptools_scm'],
-    use_scm_version=True,
+    use_scm_version={"root": ".."},
 )
