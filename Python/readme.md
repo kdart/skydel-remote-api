@@ -47,3 +47,36 @@ Go to the **Location** folder found in the above command's result and delete the
 **skydelsdx** folder. Also make sure to delete all the files starting with
 **Skydel** and finishing with the **.egg-info** extension found within the
 **Location** folder. Then try to reinstall the remote API as explained above.
+
+## Development
+
+It's best to use a virtual environment.
+
+```console
+python3 -m venv ~/skydelsdxvenv
+source ~/skydelsdxvenv/bin/activate
+```
+
+### Install meta development dependencies
+
+pip install invoke
+pip install semver
+pip install setuptools_scm
+
+### List possible tasks
+
+```console
+invoke -l
+```
+
+### Set up for in-place development
+
+```console
+invoke develop
+```
+
+### build a distributable file
+
+```console
+invoke build
+```

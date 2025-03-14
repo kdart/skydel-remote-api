@@ -1,0 +1,10 @@
+build
+flake8
+invoke
+pytest
+pytest-runner
+semver
+setuptools
+setuptools_scm
+wheel
+yapf
